@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="app.title">Textile QC System - Professional Color & Pattern Analysis</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="icon" type="image/png" href="/static/images/logo_square_no_name_1024x1024.png">
+</head>
+<body>
+    <!-- Sample Tests Side Menu Toggle Button -->
+    <button class="samples-toggle-btn" id="samplesToggleBtn" type="button" title="Sample Tests">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span data-i18n="samples">Samples</span>
+    </button>
+
+    <!-- Sample Tests Side Menu -->
+    <div class="samples-sidebar" id="samplesSidebar">
+        <div class="samples-sidebar-header">
+            <div class="samples-sidebar-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span data-i18n="sample.tests">Sample Tests</span>
+            </div>
+            <button class="samples-sidebar-close" id="samplesSidebarClose" type="button">&times;</button>
+        </div>
+        <div class="samples-sidebar-body" id="samplesSidebarBody">
+            <!-- Sample cards will be injected by JavaScript -->
+            <div class="samples-loading">
+                <div class="spinner-small"></div>
+                <span data-i18n="loading.samples">Loading samples...</span>
+            </div>
+        </div>
+        <div class="samples-sidebar-footer">
+            <p data-i18n="preconfigured.tests">Pre-configured tests with generated reports</p>
+            <p class="samples-language-note" id="samplesLanguageNote"></p>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="samples-overlay" id="samplesOverlay"></div>
+
+    <!-- Feedback Sidebar Toggle Button -->
+    <button class="feedback-toggle-btn" id="feedbackToggleBtn" type="button" title="Send Feedback">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <path d="M13 8H7"></path>
+            <path d="M17 12H7"></path>
+        </svg>
+        <span data-i18n="send.feedback">Send Feedback</span>
+    </button>
+
+    <!-- Feedback Sidebar -->
+    <div class="feedback-sidebar" id="feedbackSidebar">
+        <div class="feedback-sidebar-header">
+            <div class="feedback-sidebar-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span data-i18n="send.feedback">Send Feedback</span>
+            </div>
+            <button class="feedback-sidebar-close" id="feedbackSidebarClose" type="button">&times;</button>
+        </div>
+        <div class="feedback-sidebar-body">
+            <form id="feedbackForm" class="feedback-form">
+                <div class="feedback-note">
+                    <p data-i18n="feedback.note">All fields are optional. You can submit feedback anonymously.</p>
+                </div>
+                
+                <div class="feedback-anonymous-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="anonymousToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span data-i18n="send.anonymously">Send anonymously</span>
+                </div>
+
+                <div class="feedback-fields-group" id="personalFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="first.name">First Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="last.name">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="email.address">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="phone.number">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="feedback.type">Feedback Type</label>
+                    <select id="feedbackType" name="feedbackType" class="form-select">
+                        <option value="note" data-i18n="feedback.type.note">Note</option>
+                        <option value="complaint" data-i18n="feedback.type.complaint">Complaint</option>
+                        <option value="report" data-i18n="feedback.type.report">Report</option>
+                        <option value="suggestion" data-i18n="feedback.type.suggestion">Suggestion</option>
+                        <option value="question" data-i18n="feedback.type.question">Question</option>
+                        <option value="other" data-i18n="feedback.type.other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="message">Message <span class="char-count" id="charCount">(0/2000)</span></label>
+                    <textarea id="message" name="message" class="form-textarea" rows="6" maxlength="2000" required></textarea>
+                    <div class="error-message" id="messageError" style="display:none;"></div>
+                </div>
+
+                <div class="feedback-attachment-note">
+                    <p><span data-i18n="attachment.note">If you would like to send attachments, it is preferable to send them via email to</span> <a href="mailto:aalgamel23@posta.pau.edu.tr" class="feedback-email-link">aalgamel23@posta.pau.edu.tr</a>.</p>
+                </div>
+
+                <div class="feedback-form-content" id="feedbackFormContent">
+                    <button type="submit" class="btn-feedback-submit" id="feedbackSubmitBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+                        </svg>
+                        <span data-i18n="send">Send</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Success Message -->
+            <div class="feedback-success-message" id="feedbackSuccessMessage" style="display:none;">
+                <div class="success-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <h3 data-i18n="message.sent.successfully">Message sent successfully</h3>
+                <p data-i18n="feedback.thank.you">Thank you for your cooperation. Your message will be taken into consideration and reviewed as soon as possible.</p>
+                <button type="button" class="btn-feedback-new" id="btnFeedbackNew">
+                    <span data-i18n="send.new.feedback">Send New Feedback</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Overlay -->
+    <div class="feedback-overlay" id="feedbackOverlay"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <img src="/static/images/logo_square_with_name_1024x1024.png" alt="Textile QC Logo" class="logo">
+            <div class="header-title">
+                <h1 data-i18n="app.title">Textile QC System</h1>
+                <span class="subtitle" data-i18n="app.subtitle">Professional Color & Pattern Analysis</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <!-- Language Switcher Button -->
+            <button class="btn-language-switcher" id="btnLanguageSwitcher" type="button" title="Switch Language">
+                <img src="/static/images/tr.png" alt="Language Flag" class="lang-flag-img" id="langFlagImg">
+                <span class="lang-text" id="langText">TR</span>
+            </button>
+            
+            <!-- Source Code Download Button -->
+            <div class="code-download-container">
+                <button class="btn-code-download" id="btnCodeDownload" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <span data-i18n="source.code">Source Code</span>
+                    <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="code-dropdown" id="codeDropdown">
+                    <div class="dropdown-header" data-i18n="download.source">Download Source</div>
+                    <div class="dropdown-item" data-type="py">
+                        <div class="dropdown-item-left">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <div class="dropdown-item-info">
+                                <span class="dropdown-item-title">Python (.py)</span>
+                                <span class="dropdown-item-desc">Standard Python script</span>
+                            </div>
+                        </div>
+                        <button class="btn-help" data-help="py" type="button" title="Learn more">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="dropdown-item" data-type="ipynb">
+                        <div class="dropdown-item-left">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            <div class="dropdown-item-info">
+                                <span class="dropdown-item-title">Jupyter Notebook (.ipynb)</span>
+                                <span class="dropdown-item-desc">For Google Colab</span>
+                            </div>
+                        </div>
+                        <button class="btn-help" data-help="ipynb" type="button" title="Learn more">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Datasheet Download Button -->
+            <div class="datasheet-download-container">
+                <button class="btn-datasheet-download" id="btnDatasheetDownload" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span data-i18n="datasheet">Datasheet</span>
+                    <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="datasheet-dropdown" id="datasheetDropdown">
+                    <div class="dropdown-header" data-i18n="download.datasheet">Download Datasheet</div>
+                    <div class="dropdown-item" data-type="en">
+                        <div class="dropdown-item-left">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <div class="dropdown-item-info">
+                                <span class="dropdown-item-title" data-i18n="english.datasheet">English Datasheet</span>
+                                <span class="dropdown-item-desc">PDF Document</span>
+                            </div>
+                        </div>
+                        <button class="btn-help" data-help="datasheet-en" type="button" title="Learn more">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="dropdown-item" data-type="tr">
+                        <div class="dropdown-item-left">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <div class="dropdown-item-info">
+                                <span class="dropdown-item-title" data-i18n="turkish.datasheet">Turkish Datasheet</span>
+                                <span class="dropdown-item-desc">PDF Belgesi</span>
+                            </div>
+                        </div>
+                        <button class="btn-help" data-help="datasheet-tr" type="button" title="Learn more">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <span class="version-badge">v1.0.0</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header Text -->
+        <div class="page-header">
+            <h2 data-i18n="page.title">Image Quality Control Analysis</h2>
+            <p data-i18n="page.subtitle">Upload reference and sample images to begin quality control analysis</p>
+        </div>
+
+        <!-- Split Image Viewer -->
+        <div class="image-viewer-container">
+            <div class="image-viewer">
+                <!-- Reference Image Panel -->
+                <div class="viewer-panel">
+                    <div class="panel-header">
+                        <span class="panel-title"><span class="dot ref"></span><span data-i18n="reference.image">Reference Image</span></span>
+                        <span class="panel-info-name" id="refInfoName"></span>
+                        <span class="panel-info-right">
+                            <span class="panel-info-dimensions" id="refInfo"></span>
+                            <span class="panel-info-empty" id="refInfoEmpty" data-i18n="no.image">No image</span>
+                        </span>
+                    </div>
+                    <div class="panel-content" id="refPanelContent">
+                        <input type="file" id="refInput" accept="image/*" style="display:none;">
+                        <div class="upload-placeholder" id="refPlaceholder" onclick="document.getElementById('refInput').click()">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span data-i18n="reference.image">Reference Image</span>
+                            <small data-i18n="click.to.upload">Click to upload</small>
+                        </div>
+                        <img id="refPreview" class="image-preview" style="display:none;">
+                        <div class="shape-overlay region-overlay" id="refOverlay"></div>
+                    </div>
+                </div>
+
+                <!-- Sample Image Panel -->
+                <div class="viewer-panel">
+                    <div class="panel-header">
+                        <span class="panel-title"><span class="dot sample"></span><span data-i18n="sample.image">Sample Image</span></span>
+                        <span class="panel-info-name" id="testInfoName"></span>
+                        <span class="panel-info-right">
+                            <span class="panel-info-dimensions" id="testInfo"></span>
+                            <span class="panel-info-empty" id="testInfoEmpty" data-i18n="no.image">No image</span>
+                        </span>
+                    </div>
+                    <div class="panel-content" id="testPanelContent">
+                        <input type="file" id="testInput" accept="image/*" style="display:none;">
+                        <div class="upload-placeholder" id="testPlaceholder" onclick="document.getElementById('testInput').click()">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span data-i18n="sample.image">Sample Image</span>
+                            <small data-i18n="click.to.upload">Click to upload</small>
+                        </div>
+                        <img id="testPreview" class="image-preview" style="display:none;">
+                        <div class="shape-overlay region-overlay" id="testOverlay"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="controls-section">
+            <!-- Shape Controls -->
+            <div class="shape-controls">
+                <div class="shape-options">
+                    <label class="shape-option active" id="circleOption">
+                        <input type="radio" name="shapeType" value="circle" checked>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+                        <span data-i18n="circle">Circle</span>
+                    </label>
+                    
+                    <label class="shape-option" id="squareOption">
+                        <input type="radio" name="shapeType" value="square">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+                        <span data-i18n="square">Square</span>
+                    </label>
+                    
+                    <label class="shape-option" id="rectangleOption">
+                        <input type="radio" name="shapeType" value="rectangle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
+                        <span data-i18n="rectangle">Rectangle</span>
+                    </label>
+                    
+                    <label class="shape-option" id="fullImageOption">
+                        <input type="checkbox" id="processFullImage">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"></rect><path d="M2 12h20M12 2v20"></path></svg>
+                        <span data-i18n="process.entire.image">Process Entire Image</span>
+                    </label>
+                </div>
+
+                <div class="size-slider-container" id="sizeSliderContainer">
+                    <label data-i18n="size.px">Size (px):</label>
+                    <input type="range" id="shapeSize" min="20" max="500" value="100">
+                    <span class="size-value" id="sizeValue">100 <span data-i18n="px">px</span></span>
+                    <span class="hint-icon" id="regionHintIcon" tabindex="0">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <div class="hint-tooltip" data-i18n="region.hint">Click on image to place selection • Drag to move • Scroll to resize</div>
+                    </span>
+                </div>
+                            </div>
+
+            <!-- Main Buttons -->
+            <div class="main-buttons">
+                <button class="btn btn-outline" id="btnAdvancedSettings" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"></path>
+                    </svg>
+                    <span data-i18n="advanced.settings">Advanced Settings</span>
+                </button>
+                
+                <button class="btn btn-primary" id="btnStartProcessing" type="button" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <span data-i18n="start.processing">Start Processing</span>
+                </button>
+                
+                <button class="btn btn-danger" id="btnDeleteImages" type="button" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <span data-i18n="delete.images">Delete Images</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section (Hidden by default) -->
+        <div class="results-section" id="resultsSection" style="display:none;">
+            <div class="results-header">
+                <h2 data-i18n="analysis.results">Analysis Results</h2>
+                <div class="decision-badge" id="decisionBadge">PENDING</div>
+            </div>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                        <span data-i18n="color.score">Color Score</span>
+                    </div>
+                    <div class="card-value" id="colorScore">--</div>
+                    <div class="card-bar"><div class="bar-fill" id="colorBar"></div></div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span data-i18n="pattern.score">Pattern Score</span>
+                    </div>
+                    <div class="card-value" id="patternScore">--</div>
+                    <div class="card-bar"><div class="bar-fill" id="patternBar"></div></div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        </svg>
+                        <span data-i18n="overall.score">Overall Score</span>
+                    </div>
+                    <div class="card-value" id="overallScore">--</div>
+                    <div class="card-bar"><div class="bar-fill" id="overallBar"></div></div>
+                </div>
+            </div>
+            
+            <div class="results-actions">
+                <button class="btn btn-success" id="btnDownload" type="button" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span data-i18n="download.report">Download Report (PDF)</span>
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btnDownloadSettings" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span data-i18n="download.settings">Download Settings</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay (Hidden by default) -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3 id="loadingTitle" data-i18n="processing">Processing...</h3>
+            <p id="loadingText" data-i18n="please.wait">Please wait</p>
+        </div>
+    </div>
+
+    <!-- Point Selector Modal (Hidden by default) -->
+    <div class="point-selector-modal" id="pointSelectorModal" style="display:none;">
+        <div class="point-selector-content">
+            <div class="point-selector-header">
+                <div class="point-selector-header-left">
+                    <img src="/static/images/logo_square_with_name_1024x1024.png" alt="Logo" class="point-selector-logo">
+                    <div>
+                        <h2 data-i18n="select.sample.points">Select Sample Points</h2>
+                        <span class="point-selector-subtitle" data-i18n="click.to.select.points">Click on the images to select measurement points for color analysis</span>
+                    </div>
+                </div>
+                <button class="point-selector-close" id="closePointSelector" type="button">&times;</button>
+            </div>
+            
+            <div class="point-selector-counter">
+                <span data-i18n="selected">Selected</span>: 
+                <span id="pointCountCurrent">0</span> / <span id="pointCountTotal">5</span>
+                <div class="point-selector-progress">
+                    <div class="point-selector-progress-fill" id="pointProgressFill"></div>
+                </div>
+            </div>
+            
+            <div class="point-selector-images">
+                <div class="point-selector-image-panel">
+                    <h3 data-i18n="reference.image">Reference Image</h3>
+                    <div class="point-selector-image-container" id="pointSelectorRefContainer">
+                        <img id="pointSelectorRefImage" alt="Reference">
+                        <canvas id="pointSelectorRefCanvas"></canvas>
+                        <div class="point-selector-roi-overlay" id="pointSelectorRefROI"></div>
+                    </div>
+                </div>
+                <div class="point-selector-image-panel">
+                    <h3 data-i18n="sample.image">Sample Image</h3>
+                    <div class="point-selector-image-container" id="pointSelectorSampleContainer">
+                        <img id="pointSelectorSampleImage" alt="Sample">
+                        <canvas id="pointSelectorSampleCanvas"></canvas>
+                        <div class="point-selector-roi-overlay" id="pointSelectorSampleROI"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="point-selector-hint" id="pointSelectorHint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4m0-4h.01"></path>
+                </svg>
+                <span data-i18n="click.anywhere.hint">Click anywhere on either image to place a sample point. Points are mirrored on both images.</span>
+            </div>
+            
+            <div class="point-selector-actions">
+                <button type="button" class="btn-secondary" id="btnUndoPoint" onclick="undoLastPoint()" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M3 7v6h6"></path>
+                        <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6.36 2.64L3 13"></path>
+                    </svg>
+                    <span data-i18n="undo.last">Undo Last</span>
+                </button>
+                <button type="button" class="btn-secondary" id="btnClearAllPoints" onclick="clearAllPoints()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                    </svg>
+                    <span data-i18n="clear.all">Clear All</span>
+                </button>
+                <button type="button" class="btn-primary" id="btnConfirmPoints" onclick="confirmPoints()" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M20 6L9 17l-5-5"></path>
+                    </svg>
+                    <span data-i18n="confirm.selection">Confirm Selection</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal (Hidden by default) -->
+    <div class="modal-overlay" id="settingsModal" style="display:none;">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <div class="modal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 data-i18n="advanced.settings.title">Analysis Configuration</h2>
+                        <span class="modal-subtitle" data-i18n="configure.parameters">Fine-tune quality control parameters for precise analysis</span>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeModal" type="button">&times;</button>
+            </div>
+            
+            <div class="modal-tabs">
+                <button class="tab active" data-tab="general" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span data-i18n="general">General</span>
+                </button>
+                <button class="tab" data-tab="thresholds" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    <span data-i18n="thresholds">Thresholds</span>
+                </button>
+                <button class="tab" data-tab="color" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <circle cx="13.5" cy="6.5" r="2.5"></circle>
+                        <circle cx="6.5" cy="13.5" r="2.5"></circle>
+                        <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                        <path d="M13.5 9v4.5L10 17"></path>
+                    </svg>
+                    <span data-i18n="color.analysis">Color</span>
+                </button>
+                <button class="tab" data-tab="pattern" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span data-i18n="pattern.analysis">Pattern</span>
+                </button>
+                <button class="tab" data-tab="report" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span data-i18n="report.sections">Report</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- General Tab (NEW) -->
+                <div class="tab-content active" id="tab-general">
+                    <div class="settings-intro">
+                        <p data-i18n="settings.intro">Configure general analysis settings and operator information.</p>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <!-- Report Language Selection -->
+                        <div class="settings-group settings-group-highlight">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
+                                <h3 data-i18n="report.language">Report Language</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="report.language.desc">Select the language for the generated PDF report. Technical terms will be kept in English inside parentheses.</p>
+                            
+                            <div class="language-selector-container">
+                                <button type="button" class="language-option active" id="reportLangEn" data-lang="en">
+                                    <img src="/static/images/uk.png" alt="English" class="language-flag">
+                                    <div class="language-info">
+                                        <span class="language-name">English</span>
+                                        <small class="language-desc" data-i18n="report.lang.en.desc">Report in English</small>
+                                    </div>
+                                    <svg class="language-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="20" height="20">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                                
+                                <button type="button" class="language-option" id="reportLangTr" data-lang="tr">
+                                    <img src="/static/images/tr.png" alt="Turkish" class="language-flag">
+                                    <div class="language-info">
+                                        <span class="language-name">Türkçe</span>
+                                        <small class="language-desc" data-i18n="report.lang.tr.desc">Rapor Türkçe olarak</small>
+                                    </div>
+                                    <svg class="language-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="20" height="20">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <input type="hidden" id="report_language" value="en">
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <h3 data-i18n="operator.info">Operator Information</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="operator.info.desc">Information that appears in the generated report.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="operator_name" data-i18n="operator.name">Operator Name</label>
+                                    <small data-i18n="operator.name.hint">Name shown on report header</small>
+                                </div>
+                                <input type="text" id="operator_name" value="Operator" placeholder="Enter operator name">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="timezone_offset" data-i18n="timezone">Time Zone</label>
+                                    <small data-i18n="timezone.hint">Time zone for report timestamps</small>
+                                </div>
+                                <select id="timezone_offset">
+                                    <option value="-12">GMT -12</option>
+                                    <option value="-11">GMT -11</option>
+                                    <option value="-10">GMT -10</option>
+                                    <option value="-9">GMT -9</option>
+                                    <option value="-8">GMT -8</option>
+                                    <option value="-7">GMT -7</option>
+                                    <option value="-6">GMT -6</option>
+                                    <option value="-5">GMT -5</option>
+                                    <option value="-4">GMT -4</option>
+                                    <option value="-3">GMT -3</option>
+                                    <option value="-2">GMT -2</option>
+                                    <option value="-1">GMT -1</option>
+                                    <option value="0">GMT +0</option>
+                                    <option value="1">GMT +1</option>
+                                    <option value="2">GMT +2</option>
+                                    <option value="3" selected>GMT +3</option>
+                                    <option value="4">GMT +4</option>
+                                    <option value="5">GMT +5</option>
+                                    <option value="5.5">GMT +5:30</option>
+                                    <option value="6">GMT +6</option>
+                                    <option value="7">GMT +7</option>
+                                    <option value="8">GMT +8</option>
+                                    <option value="9">GMT +9</option>
+                                    <option value="10">GMT +10</option>
+                                    <option value="11">GMT +11</option>
+                                    <option value="12">GMT +12</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <h3 data-i18n="sampling.settings">Sampling Settings</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="sampling.settings.desc">Control how sample points are distributed on the image.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="num_sample_points" data-i18n="num.sample.points">Sample Points</label>
+                                    <small data-i18n="num.sample.points.hint">Number of measurement points (3-20)</small>
+                                </div>
+                                <input type="number" id="num_sample_points" value="5" step="1" min="3" max="20">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label data-i18n="sampling.mode">Sampling Mode</label>
+                                    <small data-i18n="sampling.mode.hint">Random generates new points each run, Manual lets you choose</small>
+                                </div>
+                                <div class="sampling-mode-selector">
+                                    <label class="radio-option">
+                                        <input type="radio" name="sampling_mode" value="random" checked>
+                                        <span data-i18n="sampling.random">Random</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="sampling_mode" value="manual">
+                                        <span data-i18n="sampling.manual">Manual</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-row manual-points-row" id="manualPointsRow" style="display: none;">
+                                <button type="button" class="btn-select-points" id="btnSelectPoints" onclick="openPointSelector()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <circle cx="12" cy="12" r="2"></circle>
+                                        <path d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
+                                    </svg>
+                                    <span data-i18n="select.points.on.image">Select points on the image</span>
+                                </button>
+                                <div class="manual-points-status" id="manualPointsStatus">
+                                    <span class="status-text" data-i18n="no.points.selected">No points selected</span>
+                                    <button type="button" class="btn-clear-points" id="btnClearPoints" onclick="clearManualPoints()" style="display: none;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <path d="M18 6L6 18M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group settings-group-highlight">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <h3 data-i18n="region.selection">Region Selection</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="region.selection.desc">Configure the shape and dimensions of the analysis region cursor.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label data-i18n="region.shape">Selection Shape</label>
+                                    <small data-i18n="region.shape.hint">Choose the shape for region selection</small>
+                                </div>
+                                <div class="region-shape-selector">
+                                    <label class="radio-option-card active" id="regionShapeCircle">
+                                        <input type="radio" name="region_shape" value="circle" checked>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                        </svg>
+                                        <span data-i18n="circle">Circle</span>
+                                    </label>
+                                    <label class="radio-option-card" id="regionShapeSquare">
+                                        <input type="radio" name="region_shape" value="square">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                        </svg>
+                                        <span data-i18n="square">Square</span>
+                                    </label>
+                                    <label class="radio-option-card" id="regionShapeRectangle">
+                                        <input type="radio" name="region_shape" value="rectangle">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                                        </svg>
+                                        <span data-i18n="rectangle">Rectangle</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="region-dimension-settings" id="circleDimensionSettings">
+                                <div class="setting-row">
+                                    <div class="setting-label">
+                                        <label for="region_circle_diameter" data-i18n="circle.diameter">Circle Diameter</label>
+                                        <small data-i18n="circle.diameter.hint">Diameter of the circular selection (20-500 px)</small>
+                                    </div>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="region_circle_diameter" value="100" step="10" min="20" max="500">
+                                        <span class="unit">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="region-dimension-settings" id="squareDimensionSettings" style="display:none;">
+                                <div class="setting-row">
+                                    <div class="setting-label">
+                                        <label for="region_square_size" data-i18n="square.size">Square Size</label>
+                                        <small data-i18n="square.size.hint">Size of the square selection (20-500 px)</small>
+                                    </div>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="region_square_size" value="100" step="10" min="20" max="500">
+                                        <span class="unit">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="region-dimension-settings" id="rectangleDimensionSettings" style="display:none;">
+                                <div class="setting-row">
+                                    <div class="setting-label">
+                                        <label for="region_rect_width" data-i18n="rectangle.width">Rectangle Width</label>
+                                        <small data-i18n="rectangle.width.hint">Width of the rectangle (20-500 px)</small>
+                                    </div>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="region_rect_width" value="150" step="10" min="20" max="500">
+                                        <span class="unit">px</span>
+                                    </div>
+                                </div>
+                                <div class="setting-row">
+                                    <div class="setting-label">
+                                        <label for="region_rect_height" data-i18n="rectangle.height">Rectangle Height</label>
+                                        <small data-i18n="rectangle.height.hint">Height of the rectangle (20-500 px)</small>
+                                    </div>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="region_rect_height" value="100" step="10" min="20" max="500">
+                                        <span class="unit">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-row setting-row-checkbox">
+                                <label class="checkbox-option-card" id="analyzeSingleImageCard">
+                                    <input type="checkbox" id="analyzeSingleImage">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    <div class="checkbox-label-content">
+                                        <span data-i18n="analyze.single.image">Analyze Single Image</span>
+                                        <small data-i18n="analyze.single.image.hint">Analyze only the sample image without comparison</small>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M12 20V10"></path>
+                                    <path d="M18 20V4"></path>
+                                    <path d="M6 20v-4"></path>
+                                </svg>
+                                <h3 data-i18n="scoring.multipliers">Scoring Multipliers</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="scoring.multipliers.desc">Adjust how scores are calculated from measurements.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="color_score_multiplier" data-i18n="color.score.multiplier">Color Score Multiplier</label>
+                                    <small data-i18n="color.score.multiplier.hint">Higher = more sensitive to ΔE</small>
+                                </div>
+                                <input type="number" id="color_score_multiplier" value="20" step="1" min="1" max="100">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="uniformity_std_multiplier" data-i18n="uniformity.multiplier">Uniformity Multiplier</label>
+                                    <small data-i18n="uniformity.multiplier.hint">Higher = stricter uniformity check</small>
+                                </div>
+                                <input type="number" id="uniformity_std_multiplier" value="10" step="1" min="1" max="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thresholds Tab -->
+                <div class="tab-content" id="tab-thresholds">
+                    <div class="settings-intro">
+                        <p data-i18n="thresholds.intro">Set pass/fail thresholds for quality decisions. Values below Pass = ACCEPT, between Pass and Conditional = CONDITIONAL, above Conditional = REJECT.</p>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="13.5" cy="6.5" r="2.5"></circle>
+                                    <path d="M3 3v18h18"></path>
+                                </svg>
+                                <h3 data-i18n="color.thresholds">Color Difference (ΔE)</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="color.thresholds.desc">Industry standard: ΔE &lt; 1.0 = imperceptible, 1-2 = close inspection, 2-3.5 = noticeable.</p>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="delta_e_threshold" data-i18n="de.pass.threshold">ΔE Pass Threshold</label>
+                                    <small class="threshold-pass" data-i18n="de.pass.hint">Below this = PASS</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="delta_e_threshold" value="2.0" step="0.1" min="0" max="10">
+                                    <span class="unit">ΔE</span>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="delta_e_conditional" data-i18n="de.conditional.threshold">ΔE Conditional Threshold</label>
+                                    <small class="threshold-conditional" data-i18n="de.conditional.hint">Above this = FAIL</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="delta_e_conditional" value="3.5" step="0.1" min="0" max="10">
+                                    <span class="unit">ΔE</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                                <h3 data-i18n="pattern.thresholds">Pattern Similarity (SSIM)</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="pattern.thresholds.desc">SSIM ranges 0-1. Higher = more similar. Industry typical: 0.90-0.98.</p>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="ssim_pass_threshold" data-i18n="ssim.pass.threshold">SSIM Pass Threshold</label>
+                                    <small class="threshold-pass" data-i18n="ssim.pass.hint">Above this = PASS</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="ssim_pass_threshold" value="0.95" step="0.01" min="0" max="1">
+                                    <span class="unit">SSIM</span>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="ssim_conditional_threshold" data-i18n="ssim.conditional.threshold">SSIM Conditional Threshold</label>
+                                    <small class="threshold-conditional" data-i18n="ssim.conditional.hint">Below this = FAIL</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="ssim_conditional_threshold" value="0.90" step="0.01" min="0" max="1">
+                                    <span class="unit">SSIM</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                <h3 data-i18n="score.thresholds">Final Score Thresholds</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="score.thresholds.desc">Minimum scores (0-100) required for passing quality control.</p>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="color_score_threshold" data-i18n="color.score.threshold">Color Score Threshold</label>
+                                    <small data-i18n="color.score.threshold.hint">Minimum acceptable color score</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="color_score_threshold" value="70" step="1" min="0" max="100">
+                                    <span class="unit">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="pattern_score_threshold" data-i18n="pattern.score.threshold">Pattern Score Threshold</label>
+                                    <small data-i18n="pattern.score.threshold.hint">Minimum acceptable pattern score</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="pattern_score_threshold" value="90" step="1" min="0" max="100">
+                                    <span class="unit">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="overall_score_threshold" data-i18n="overall.score.threshold">Overall Score Threshold</label>
+                                    <small data-i18n="overall.score.threshold.hint">Final pass/fail decision threshold</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="overall_score_threshold" value="70" step="1" min="0" max="100">
+                                    <span class="unit">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                </svg>
+                                <h3 data-i18n="lab.thresholds">Lab* Component Thresholds</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="lab.thresholds.desc">Individual thresholds for L* (lightness), a* and b* color axes.</p>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="lab_l_threshold" data-i18n="lab.l.threshold">L* Threshold (Lightness)</label>
+                                    <small data-i18n="lab.l.hint">Max acceptable lightness difference</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="lab_l_threshold" value="1.0" step="0.1" min="0" max="10">
+                                    <span class="unit">ΔL*</span>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-row threshold-row">
+                                <div class="setting-label">
+                                    <label for="lab_ab_threshold" data-i18n="lab.ab.threshold">a*/b* Threshold (Chroma)</label>
+                                    <small data-i18n="lab.ab.hint">Max acceptable chroma difference</small>
+                                </div>
+                                <div class="input-with-unit">
+                                    <input type="number" id="lab_ab_threshold" value="1.0" step="0.1" min="0" max="10">
+                                    <span class="unit">Δa*/b*</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Color Analysis Tab -->
+                <div class="tab-content" id="tab-color">
+                    <div class="settings-intro">
+                        <p data-i18n="color.intro">Configure color measurement methods and spectrophotometer simulation settings.</p>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 2v20"></path>
+                                    <path d="M2 12h20"></path>
+                                </svg>
+                                <h3 data-i18n="color.difference.methods">Color Difference Method</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="color.methods.desc">ΔE2000 is always calculated. CMC is optional for textile industry compliance.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="use_delta_e_cmc" data-i18n="use.cmc">Enable CMC Calculation</label>
+                                    <small data-i18n="use.cmc.hint">CMC(l:c) formula for textile industry</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="use_delta_e_cmc" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="cmc_l_c_ratio" data-i18n="cmc.ratio">CMC l:c Ratio</label>
+                                    <small data-i18n="cmc.ratio.hint">2:1 for acceptability, 1:1 for perceptibility</small>
+                                </div>
+                                <select id="cmc_l_c_ratio">
+                                    <option value="2:1" selected>2:1 (Acceptability)</option>
+                                    <option value="1:1">1:1 (Perceptibility)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <h3 data-i18n="spectrophotometer.settings">Spectrophotometer Simulation</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="spectro.sim.desc">Simulates professional spectrophotometer measurement conditions.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="observer_angle" data-i18n="observer.angle">Observer Angle</label>
+                                    <small data-i18n="observer.angle.hint">CIE standard observer</small>
+                                </div>
+                                <select id="observer_angle">
+                                    <option value="2" selected>2° Standard Observer</option>
+                                    <option value="10">10° Standard Observer</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="geometry_mode" data-i18n="geometry.mode">Geometry Mode</label>
+                                    <small data-i18n="geometry.mode.hint">Measurement geometry configuration</small>
+                                </div>
+                                <select id="geometry_mode">
+                                    <option value="d/8 SCI" selected>d/8 SCI (Specular Included)</option>
+                                    <option value="d/8 SCE">d/8 SCE (Specular Excluded)</option>
+                                    <option value="45/0">45/0 (Directional)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                </svg>
+                                <h3 data-i18n="whiteness.settings">Whiteness & Yellowness</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="whiteness.desc">Thresholds for white fabric evaluation (ISO brightness standards).</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="whiteness_min" data-i18n="whiteness.min">Minimum Whiteness Index</label>
+                                    <small data-i18n="whiteness.min.hint">CIE Whiteness Index threshold</small>
+                                </div>
+                                <input type="number" id="whiteness_min" value="40" step="1" min="0" max="100">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="yellowness_max" data-i18n="yellowness.max">Maximum Yellowness Index</label>
+                                    <small data-i18n="yellowness.max.hint">ASTM E313 Yellowness threshold</small>
+                                </div>
+                                <input type="number" id="yellowness_max" value="10" step="1" min="0" max="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pattern Analysis Tab -->
+                <div class="tab-content" id="tab-pattern">
+                    <div class="settings-intro">
+                        <p data-i18n="pattern.intro">Configure texture analysis algorithms and pattern detection parameters.</p>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M12 1v6"></path>
+                                    <path d="M12 17v6"></path>
+                                    <path d="M1 12h6"></path>
+                                    <path d="M17 12h6"></path>
+                                </svg>
+                                <h3 data-i18n="texture.parameters">LBP Texture Analysis</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="lbp.desc">Local Binary Patterns for texture classification.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="lbp_points" data-i18n="lbp.points">LBP Points</label>
+                                    <small data-i18n="lbp.points.hint">Sampling points around each pixel (8-24)</small>
+                                </div>
+                                <input type="number" id="lbp_points" value="24" step="1" min="8" max="32">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="lbp_radius" data-i18n="lbp.radius">LBP Radius</label>
+                                    <small data-i18n="lbp.radius.hint">Circle radius for sampling (1-5)</small>
+                                </div>
+                                <input type="number" id="lbp_radius" value="3" step="1" min="1" max="5">
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                </svg>
+                                <h3 data-i18n="wavelet.settings">Wavelet Transform</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="wavelet.desc">Multi-resolution frequency analysis of patterns.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="wavelet_type" data-i18n="wavelet.type">Wavelet Type</label>
+                                    <small data-i18n="wavelet.type.hint">Wavelet basis function</small>
+                                </div>
+                                <select id="wavelet_type">
+                                    <option value="db4" selected>Daubechies 4 (db4)</option>
+                                    <option value="haar">Haar</option>
+                                    <option value="sym4">Symlet 4 (sym4)</option>
+                                    <option value="coif2">Coiflet 2 (coif2)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="wavelet_levels" data-i18n="wavelet.levels">Decomposition Levels</label>
+                                    <small data-i18n="wavelet.levels.hint">Number of decomposition levels (1-5)</small>
+                                </div>
+                                <input type="number" id="wavelet_levels" value="3" step="1" min="1" max="5">
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"></path>
+                                </svg>
+                                <h3 data-i18n="pattern.repetition">Pattern Detection</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="pattern.detection.desc">Settings for finding and matching repeating patterns.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="keypoint_detector" data-i18n="keypoint.detector">Keypoint Detector</label>
+                                    <small data-i18n="keypoint.hint">Feature detection algorithm</small>
+                                </div>
+                                <select id="keypoint_detector">
+                                    <option value="ORB" selected>ORB (Fast, Good)</option>
+                                    <option value="SIFT">SIFT (Slow, Accurate)</option>
+                                    <option value="AKAZE">AKAZE (Balanced)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="pattern_min_area" data-i18n="pattern.min.area">Min Pattern Area (px)</label>
+                                    <small data-i18n="pattern.min.hint">Minimum detected pattern size</small>
+                                </div>
+                                <input type="number" id="pattern_min_area" value="100" step="10" min="10" max="1000">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="pattern_max_area" data-i18n="pattern.max.area">Max Pattern Area (px)</label>
+                                    <small data-i18n="pattern.max.hint">Maximum detected pattern size</small>
+                                </div>
+                                <input type="number" id="pattern_max_area" value="5000" step="100" min="100" max="50000">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="pattern_similarity_threshold" data-i18n="pattern.similarity">Similarity Threshold</label>
+                                    <small data-i18n="pattern.similarity.hint">Min similarity for pattern matching</small>
+                                </div>
+                                <input type="number" id="pattern_similarity_threshold" value="0.85" step="0.05" min="0.5" max="1">
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <h3 data-i18n="defect.detection">Defect Detection</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="defect.desc">Settings for detecting anomalies and defects.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="defect_min_area" data-i18n="defect.min.area">Min Defect Area (px)</label>
+                                    <small data-i18n="defect.min.hint">Minimum size to flag as defect</small>
+                                </div>
+                                <input type="number" id="defect_min_area" value="50" step="10" min="10" max="500">
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="saliency_strength" data-i18n="saliency.strength">Saliency Strength</label>
+                                    <small data-i18n="saliency.hint">Anomaly detection sensitivity</small>
+                                </div>
+                                <input type="number" id="saliency_strength" value="1.0" step="0.1" min="0.1" max="3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Report Sections Tab -->
+                <div class="tab-content" id="tab-report">
+                    <div class="settings-intro">
+                        <p data-i18n="report.intro">Choose which sections to include in the generated PDF report.</p>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <h3 data-i18n="main.sections">Main Report Sections</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="main.sections.desc">Primary analysis sections in the report.</p>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="enable_color_unit" data-i18n="color.unit">Color Analysis Unit</label>
+                                    <small data-i18n="color.unit.hint">ΔE, Lab*, color measurements</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="enable_color_unit" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="enable_pattern_unit" data-i18n="pattern.unit">Pattern Analysis Unit</label>
+                                    <small data-i18n="pattern.unit.hint">SSIM, texture, symmetry analysis</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="enable_pattern_unit" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="enable_pattern_repetition" data-i18n="pattern.repetition.unit">Pattern Repetition Unit</label>
+                                    <small data-i18n="pattern.rep.hint">Repeat detection, spatial analysis</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="enable_pattern_repetition" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="enable_spectrophotometer" data-i18n="spectrophotometer">Spectrophotometer Data</label>
+                                    <small data-i18n="spectro.hint">Simulated instrument readings</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="enable_spectrophotometer" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">
+                                    <label for="enable_analysis_settings" data-i18n="analysis.settings.page">Settings Documentation</label>
+                                    <small data-i18n="settings.page.hint">Include all settings used in analysis</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="enable_analysis_settings">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <h3 data-i18n="color.subsections">Color Unit Sub-sections</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="color.subsections.desc">Fine-tune color analysis report content.</p>
+                            
+                            <div class="setting-row compact">
+                                <label for="enable_color_measurements" data-i18n="color.measurements">Color Measurements</label>
+                                <input type="checkbox" id="enable_color_measurements" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_color_difference" data-i18n="color.difference">Color Difference</label>
+                                <input type="checkbox" id="enable_color_difference" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_color_statistical" data-i18n="color.statistical">Statistical Analysis</label>
+                                <input type="checkbox" id="enable_color_statistical" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_color_visual_diff" data-i18n="color.visual.diff">Visual Difference Map</label>
+                                <input type="checkbox" id="enable_color_visual_diff" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_color_lab_detailed" data-i18n="color.lab.detailed">Detailed Lab* Analysis</label>
+                                <input type="checkbox" id="enable_color_lab_detailed" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_color_recommendations" data-i18n="color.recommendations">Recommendations</label>
+                                <input type="checkbox" id="enable_color_recommendations" checked>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <div class="settings-group-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                                </svg>
+                                <h3 data-i18n="pattern.subsections">Pattern Unit Sub-sections</h3>
+                            </div>
+                            <p class="settings-group-desc" data-i18n="pattern.subsections.desc">Fine-tune pattern analysis report content.</p>
+                            
+                            <div class="setting-row compact">
+                                <label for="enable_pattern_ssim" data-i18n="pattern.ssim">SSIM Analysis</label>
+                                <input type="checkbox" id="enable_pattern_ssim" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_pattern_symmetry" data-i18n="pattern.symmetry">Symmetry Analysis</label>
+                                <input type="checkbox" id="enable_pattern_symmetry" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_pattern_edge" data-i18n="pattern.edge">Edge Detection</label>
+                                <input type="checkbox" id="enable_pattern_edge" checked>
+                            </div>
+                            <div class="setting-row compact">
+                                <label for="enable_pattern_advanced" data-i18n="pattern.advanced">Advanced Analysis</label>
+                                <input type="checkbox" id="enable_pattern_advanced" checked>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnResetSettings" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span data-i18n="reset.to.defaults">Reset to Defaults</span>
+                </button>
+                <div class="modal-footer-right">
+                    <button class="btn btn-secondary" id="btnCancelSettings" type="button" data-i18n="cancel">Cancel</button>
+                    <button class="btn btn-primary" id="btnApplySettings" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span data-i18n="apply.settings">Apply Settings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Source Code Help Dialog -->
+    <div class="help-dialog-overlay" id="helpDialogOverlay" style="display:none;">
+        <div class="help-dialog">
+            <div class="help-dialog-header">
+                <div class="help-dialog-icon" id="helpDialogIcon"></div>
+                <h3 id="helpDialogTitle" data-i18n="format.information">Format Information</h3>
+                <button class="help-dialog-close" id="helpDialogClose" type="button">&times;</button>
+            </div>
+            <div class="help-dialog-body" id="helpDialogBody">
+                <!-- Content injected by JavaScript -->
+            </div>
+            <div class="help-dialog-footer">
+                <button class="btn btn-primary btn-sm" id="helpDialogDownload" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span data-i18n="download.this.format">Download this format</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Development Modal -->
+    <div class="development-modal-overlay" id="developmentModal" style="display:none;">
+        <div class="development-modal">
+            <div class="development-modal-header">
+                <div class="development-logo-container">
+                    <img src="/static/images/logo_square_with_name_1024x1024.png" alt="Logo" class="development-logo">
+                </div>
+                <h1 class="development-title" data-i18n="development.title">Website Under Development</h1>
+                <p class="development-message" data-i18n="development.message">This website is currently under development.</p>
+            </div>
+            
+            <div class="development-modal-body">
+                <div class="development-content">
+                    <p class="development-text" data-i18n="development.view.samples">You can view the results through the ready-made samples from the Samples section on the left side of the screen.</p>
+                    <p class="development-text" data-i18n="development.test.new">Or, to test new samples, download the source code (Python) and test it directly in the Google Colab environment.</p>
+                    
+                    <div class="development-logos-section">
+                        <p class="development-logos-note" data-i18n="development.logos.note">To obtain full results, these logos must be added to Google Colab with the same filenames.</p>
+                        <div class="development-logos-buttons">
+                            <button class="btn-logo-download" data-logo="logo_square_with_name_1024x1024.png" type="button">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span data-i18n="development.download.logo">Download logo</span>: logo_square_with_name_1024x1024
+                            </button>
+                            <button class="btn-logo-download" data-logo="logo_vertical_512x256.png" type="button">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span data-i18n="development.download.logo">Download logo</span>: logo_vertical_512x256
+                            </button>
+                            <button class="btn-logo-download" data-logo="logo_square_no_name_1024x1024.png" type="button">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span data-i18n="development.download.logo">Download logo</span>: logo_square_no_name_1024x1024
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="development-code-section" id="developmentCodeSection" style="display:none;">
+                        <h3 data-i18n="development.source.code">Source Code</h3>
+                        <pre class="development-code" id="developmentCodeContent"></pre>
+                        <div class="development-copy-section">
+                            <p class="development-copy-instruction" data-i18n="development.copy.instruction">Copy the code and paste it into the Google Colab environment.</p>
+                            <button class="btn btn-primary btn-copy-code" id="btnCopyCode" type="button">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span data-i18n="development.copy.code">Copy Code</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="development-modal-footer">
+                <button class="btn btn-secondary" id="btnDevelopmentColab" type="button">
+                    <img src="/static/images/colab.png" alt="Google Colab" class="colab-logo">
+                    <span data-i18n="development.go.colab">Go to Google Colab</span>
+                </button>
+                <button class="btn btn-primary" id="btnDevelopmentDownloadCode" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span data-i18n="development.download.code">Download the code available on the homepage</span>
+                </button>
+                <button class="btn btn-outline" id="btnDevelopmentClose" type="button" data-i18n="development.close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <img src="/static/images/logo_vertical_512x256.png" alt="SpectroTXQS Logo" class="footer-logo">
+        <span data-i18n="copyright">© 2025 Textile Engineering Solutions | </span>
+        <button class="footer-contact-btn" id="footerContactBtn" type="button">Abdelbary Algamel PAÜ</button>
+    </footer>
+
+    <!-- Contact Popup -->
+    <div class="contact-popup-overlay" id="contactPopup" style="display:none;">
+        <div class="contact-popup">
+            <div class="contact-popup-header">
+                <h3 data-i18n="contact.title">Contact</h3>
+                <button class="contact-popup-close" id="contactPopupClose" type="button">&times;</button>
+            </div>
+            <div class="contact-popup-body">
+                <div class="contact-email-container">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <a href="mailto:aalgamel23@posta.pau.edu.tr" class="contact-email">aalgamel23@posta.pau.edu.tr</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/region-selector.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/development-modal.js"></script>
+</body>
+</html>
