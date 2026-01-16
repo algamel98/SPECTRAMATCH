@@ -4,7 +4,7 @@
  */
 
 var I18n = {
-    currentLang: 'en',
+    currentLang: 'tr',
     
     translations: {
         en: {
@@ -315,6 +315,16 @@ var I18n = {
             'jupyter.notebook': 'Jupyter Notebook (.ipynb)',
             'download.this.format': 'Download this format',
             'learn.more': 'Learn more',
+            
+            // GitHub
+            'github.browse.project': 'Browse the project on GitHub',
+            'github.view.repository': 'View repository and documentation',
+            'github.description': 'Access the complete source code, documentation, and project files on GitHub. The repository contains all the code, README files, and resources needed to understand and use the Textile QC System.',
+            'github.read.readme': 'Please read the README file on the GitHub repository for detailed information about the project, installation instructions, and usage guidelines.',
+            'github.under.construction': 'This project is under construction and actively being developed. New features and improvements are added regularly.',
+            'github.inquiries.title': 'For Inquiries or Suggestions',
+            'github.feedback.panel': 'Pull the feedback panel from the left side of the screen and fill out the survey',
+            'github.visit.repository': 'Visit GitHub Repository',
             
             // Errors & Messages
             'error.reading.file': 'Error reading file',
@@ -681,6 +691,16 @@ var I18n = {
             'download.this.format': 'Bu biçimi indir',
             'learn.more': 'Daha fazla bilgi',
             
+            // GitHub
+            'github.browse.project': 'Projeyi GitHub\'da İncele',
+            'github.view.repository': 'Depoyu ve dokümantasyonu görüntüle',
+            'github.description': 'GitHub\'da tam kaynak kodu, dokümantasyonu ve proje dosyalarını erişin. Depo, Textile QC System\'i anlamak ve kullanmak için gereken tüm kodları, README dosyalarını ve kaynakları içerir.',
+            'github.read.readme': 'Proje hakkında detaylı bilgi, kurulum talimatları ve kullanım kılavuzu için lütfen GitHub deposundaki README dosyasını okuyun.',
+            'github.under.construction': 'Bu proje yapım aşamasındadır ve aktif olarak geliştirilmektedir. Yeni özellikler ve iyileştirmeler düzenli olarak eklenmektedir.',
+            'github.inquiries.title': 'Sorular veya Öneriler İçin',
+            'github.feedback.panel': 'Ekranın sol tarafından geri bildirim panelini çekin ve anketi doldurun',
+            'github.visit.repository': 'GitHub Deposunu Ziyaret Et',
+            
             // Errors & Messages
             'error.reading.file': 'Dosya okuma hatası',
             'please.upload.both': 'Lütfen hem referans hem de örnek görüntüleri yükleyin',
@@ -742,10 +762,13 @@ var I18n = {
      * Initialize i18n system
      */
     init: function() {
-        // Load saved language preference or default to English
+        // Load saved language preference or default to Turkish
         var savedLang = localStorage.getItem('textile_qc_lang');
         if (savedLang && this.translations[savedLang]) {
             this.currentLang = savedLang;
+        } else {
+            // Default to Turkish if no saved preference
+            this.currentLang = 'tr';
         }
         
         // Set HTML lang attribute
@@ -800,8 +823,10 @@ var I18n = {
             titleEl.textContent = I18n.t('app.title') + ' - ' + I18n.t('app.subtitle');
         }
         
-        // Update language switcher button
-        updateLanguageSwitcher();
+        // Update language toggle switch
+        if (typeof updateLanguageToggle === 'function') {
+            updateLanguageToggle();
+        }
     },
     
     /**
@@ -831,30 +856,13 @@ var I18n = {
 };
 
 /**
- * Update language switcher button appearance
+ * Update language toggle switch appearance
+ * (Kept for backward compatibility, but updateLanguageToggle in app.js is used)
  */
 function updateLanguageSwitcher() {
-    var btn = document.getElementById('btnLanguageSwitcher');
-    if (!btn) return;
-    
-    var lang = I18n.getLanguage();
-    var langText = lang === 'en' ? 'TR' : 'ENG';
-    // Show flag of the language you can switch TO (opposite of current)
-    var flagImg = lang === 'en' ? '/static/images/tr.png' : '/static/images/uk.png';
-    
-    var span = btn.querySelector('.lang-text');
-    if (span) {
-        span.textContent = langText;
+    if (typeof updateLanguageToggle === 'function') {
+        updateLanguageToggle();
     }
-    
-    var flagImgEl = btn.querySelector('.lang-flag-img');
-    if (flagImgEl) {
-        flagImgEl.src = flagImg;
-        flagImgEl.alt = lang === 'en' ? 'Turkish Flag' : 'English Flag';
-    }
-    
-    // Update title
-    btn.title = lang === 'en' ? 'Türkçe\'ye Geç' : 'Switch to English';
 }
 
 // Initialize on DOM ready

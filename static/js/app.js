@@ -12,7 +12,7 @@ var AppState = {
     testFile: null,
     shapeType: 'circle',
     shapeSize: 100,
-    processFullImage: false,
+    processFullImage: true,
     analyzeSingleImage: false,
     pdfFilename: null,
     settingsPdfFilename: null,
@@ -65,24 +65,44 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-translate dynamic content
         updateDynamicTranslations();
         updateFeedbackFormTranslations();
+        // Update language toggle switch
+        updateLanguageToggle();
     });
 });
 
 // ==========================================
-// Language Switcher
+// Language Switcher (Toggle Switch)
 // ==========================================
 function initLanguageSwitcher() {
-    var btn = document.getElementById('btnLanguageSwitcher');
-    if (!btn) return;
+    var toggle = document.getElementById('btnLanguageSwitcher');
+    if (!toggle) return;
     
-    btn.addEventListener('click', function() {
+    // Wait a tiny bit to ensure I18n is initialized
+    setTimeout(function() {
+        // Set initial state based on current language
+        updateLanguageToggle();
+    }, 0);
+    
+    toggle.addEventListener('click', function() {
         var currentLang = I18n.getLanguage();
         var newLang = currentLang === 'en' ? 'tr' : 'en';
         I18n.setLanguage(newLang);
+        // updateLanguageToggle will be called via languageChanged event
     });
+}
+
+function updateLanguageToggle() {
+    var toggle = document.getElementById('btnLanguageSwitcher');
+    if (!toggle) return;
     
-    // Initial update
-    updateLanguageSwitcher();
+    var currentLang = I18n.getLanguage();
+    // Turkish = left position (false), English = right position (true)
+    toggle.setAttribute('aria-checked', currentLang === 'en' ? 'true' : 'false');
+    toggle.classList.toggle('toggle-active', currentLang === 'en');
+    
+    // Update title
+    toggle.setAttribute('aria-label', currentLang === 'en' ? 'Türkçe\'ye Geç' : 'Switch to English');
+    toggle.title = currentLang === 'en' ? 'Türkçe\'ye Geç' : 'Switch to English';
 }
 
 function updateDynamicTranslations() {
@@ -245,6 +265,15 @@ function initShapeControls() {
     
     var fullImageCheckbox = document.getElementById('processFullImage');
     if (fullImageCheckbox) {
+        // Set initial state to match AppState
+        fullImageCheckbox.checked = AppState.processFullImage;
+        
+        // Initialize shape controls based on initial state
+        toggleShapeControls(!AppState.processFullImage);
+        if (typeof RegionSelector !== 'undefined') {
+            RegionSelector.setEnabled(!AppState.processFullImage);
+        }
+        
         fullImageCheckbox.addEventListener('change', function(e) {
             AppState.processFullImage = e.target.checked;
             toggleShapeControls(!e.target.checked);
@@ -1651,6 +1680,55 @@ function getHelpContent(type) {
                 </div>
             `
         };
+    } else if (type === 'github') {
+        return {
+            title: I18n.t('github.browse.project'),
+            icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>',
+            body: `
+                <div class="github-help-content">
+                    <h4>🔗 ` + I18n.t('github.browse.project') + `</h4>
+                    <p class="github-description">` + I18n.t('github.description') + `</p>
+                    
+                    <div class="github-info-box">
+                        <div class="github-info-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; flex-shrink: 0;">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <span>` + I18n.t('github.read.readme') + `</span>
+                        </div>
+                        <div class="github-info-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; flex-shrink: 0;">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span>` + I18n.t('github.under.construction') + `</span>
+                        </div>
+                    </div>
+                    
+                    <div class="github-contact-section">
+                        <h5>` + I18n.t('github.inquiries.title') + `</h5>
+                        <div class="github-contact-methods">
+                            <div class="github-contact-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; flex-shrink: 0;">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                <span>` + I18n.t('github.feedback.panel') + `</span>
+                            </div>
+                            <div class="github-contact-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; flex-shrink: 0;">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <a href="mailto:aalgamel23@posta.pau.edu.tr" class="github-email-link">aalgamel23@posta.pau.edu.tr</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
     } else if (type === 'datasheet-en' || type === 'datasheet-tr') {
         return {
             title: I18n.t('datasheet.what.is'),
@@ -1696,12 +1774,18 @@ function initCodeDownload() {
     var dropdownItems = document.querySelectorAll('.dropdown-item');
     dropdownItems.forEach(function(item) {
         item.addEventListener('click', function(e) {
-            // Don't trigger download if clicking on help button
+            // Don't trigger action if clicking on help button
             if (e.target.closest('.btn-help')) return;
             
             var fileType = item.getAttribute('data-type');
-            downloadSourceCode(fileType);
-            closeAllDropdowns();
+            if (fileType === 'github') {
+                // Open GitHub repository in new tab
+                window.open('https://github.com/algamel98/SPECTRAMATCH', '_blank');
+                closeAllDropdowns();
+            } else {
+                downloadSourceCode(fileType);
+                closeAllDropdowns();
+            }
         });
     });
     
@@ -1850,19 +1934,56 @@ function showHelpDialog(type) {
     // Update body content
     bodyEl.innerHTML = content.body;
     
-    // Update download button text based on content type
+    // Update download button text and behavior based on content type
     if (downloadBtn) {
         var btnSpan = downloadBtn.querySelector('span[data-i18n]');
-        if (type === 'datasheet-en' || type === 'datasheet-tr') {
+        var btnSvg = downloadBtn.querySelector('svg');
+        
+        if (type === 'github') {
+            // For GitHub, change button to "Visit GitHub"
+            if (btnSpan) {
+                btnSpan.textContent = I18n.t('github.visit.repository');
+            }
+            // Update icon to external link
+            if (btnSvg) {
+                btnSvg.innerHTML = '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>';
+                btnSvg.setAttribute('viewBox', '0 0 24 24');
+                btnSvg.setAttribute('fill', 'none');
+                btnSvg.setAttribute('stroke', 'currentColor');
+                btnSvg.setAttribute('stroke-width', '2');
+            }
+            // Update button click handler
+            downloadBtn.onclick = function(e) {
+                e.preventDefault();
+                window.open('https://github.com/algamel98/SPECTRAMATCH', '_blank');
+                closeHelpDialog();
+            };
+        } else if (type === 'datasheet-en' || type === 'datasheet-tr') {
             // For datasheet, change button text
             if (btnSpan) {
                 btnSpan.textContent = I18n.t('download.datasheet');
             }
+            // Reset button click handler
+            downloadBtn.onclick = function(e) {
+                e.preventDefault();
+                if (type === 'datasheet-en') {
+                    window.location.href = '/static/docs/datasheet_en.pdf';
+                } else if (type === 'datasheet-tr') {
+                    window.location.href = '/static/docs/datasheet_tr.pdf';
+                }
+                closeHelpDialog();
+            };
         } else {
-            // For source code
+            // For source code downloads
             if (btnSpan) {
                 btnSpan.textContent = I18n.t('download.this.format');
             }
+            // Reset button click handler
+            downloadBtn.onclick = function(e) {
+                e.preventDefault();
+                downloadSourceCode(type);
+                closeHelpDialog();
+            };
         }
     }
     
@@ -1879,6 +2000,12 @@ function closeHelpDialog() {
 }
 
 function downloadSourceCode(fileType) {
+    // Handle GitHub case - redirect to GitHub repository
+    if (fileType === 'github') {
+        window.open('https://github.com/algamel98/SPECTRAMATCH', '_blank');
+        return;
+    }
+    
     var downloadUrl = '/api/source/' + fileType;
     
     // Create a temporary link and trigger download

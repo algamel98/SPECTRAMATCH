@@ -162,11 +162,21 @@
             </div>
         </div>
         <div class="header-right">
-            <!-- Language Switcher Button -->
-            <button class="btn-language-switcher" id="btnLanguageSwitcher" type="button" title="Switch Language">
-                <img src="/static/images/tr.png" alt="Language Flag" class="lang-flag-img" id="langFlagImg">
-                <span class="lang-text" id="langText">TR</span>
-            </button>
+            <!-- Language Toggle Switch -->
+            <div class="language-toggle-container" id="languageToggleContainer">
+                <button class="language-toggle-switch" id="btnLanguageSwitcher" type="button" role="switch" aria-label="Switch Language">
+                    <div class="toggle-track">
+                        <div class="toggle-slider">
+                            <div class="toggle-flag toggle-flag-tr">
+                                <img src="/static/images/tr.png" alt="Turkish Flag" class="flag-img">
+                            </div>
+                            <div class="toggle-flag toggle-flag-en">
+                                <img src="/static/images/uk.png" alt="English Flag" class="flag-img">
+                            </div>
+                        </div>
+                    </div>
+                </button>
+            </div>
             
             <!-- Source Code Download Button -->
             <div class="code-download-container">
@@ -214,6 +224,24 @@
                             </div>
                         </div>
                         <button class="btn-help" data-help="ipynb" type="button" title="Learn more">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="dropdown-item dropdown-item-github" data-type="github">
+                        <div class="dropdown-item-left">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                            </svg>
+                            <div class="dropdown-item-info">
+                                <span class="dropdown-item-title" data-i18n="github.browse.project">Browse the project on GitHub</span>
+                                <span class="dropdown-item-desc" data-i18n="github.view.repository">View repository and documentation</span>
+                            </div>
+                        </div>
+                        <button class="btn-help" data-help="github" type="button" title="Learn more">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -375,7 +403,7 @@
                     </label>
                     
                     <label class="shape-option" id="fullImageOption">
-                        <input type="checkbox" id="processFullImage">
+                        <input type="checkbox" id="processFullImage" checked>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"></rect><path d="M2 12h20M12 2v20"></path></svg>
                         <span data-i18n="process.entire.image">Process Entire Image</span>
                     </label>

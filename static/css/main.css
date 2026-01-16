@@ -73,51 +73,154 @@ body {
 }
 
 /* ==========================================
-   Language Switcher Button
+   Language Toggle Switch
    ========================================== */
-.btn-language-switcher {
-    display: inline-flex;
+.language-toggle-container {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #0066cc;
-    background: linear-gradient(135deg, rgba(0, 102, 204, 0.08), rgba(0, 136, 255, 0.12));
-    border: 2px solid rgba(0, 102, 204, 0.3);
-    border-radius: 10px;
+}
+
+.language-toggle-switch {
+    position: relative;
+    width: 80px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    padding: 0;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    font-family: inherit;
-    white-space: nowrap;
-    min-width: 60px;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.language-toggle-switch:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+    border-radius: 24px;
+}
+
+.toggle-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    border-radius: 24px;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.language-toggle-switch:hover .toggle-track {
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.language-toggle-switch.toggle-active .toggle-track {
+    background: linear-gradient(135deg, #0066cc 0%, #0088ff 100%);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.15),
+        0 4px 16px rgba(0, 102, 204, 0.3);
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 50%;
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        0 1px 3px rgba(0, 0, 0, 0.2),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.8);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
     justify-content: center;
+    z-index: 2;
 }
 
-.btn-language-switcher:hover {
-    background: linear-gradient(135deg, rgba(0, 102, 204, 0.15), rgba(0, 136, 255, 0.2));
-    border-color: #0066cc;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+.language-toggle-switch.toggle-active .toggle-slider {
+    transform: translateX(40px);
+    box-shadow: 
+        0 3px 10px rgba(0, 102, 204, 0.25),
+        0 1px 4px rgba(0, 102, 204, 0.2),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.9);
 }
 
-.btn-language-switcher:active {
-    transform: translateY(0);
+.toggle-flag {
+    position: absolute;
+    width: 24px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.1s;
+    pointer-events: none;
 }
 
-.btn-language-switcher .lang-flag-img {
-    width: 20px;
-    height: 15px;
+.toggle-flag-tr {
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.toggle-flag-en {
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Show Turkish flag when toggle is on left (Turkish selected) */
+.language-toggle-switch:not(.toggle-active) .toggle-flag-tr {
+    opacity: 1;
+}
+
+/* Show English flag when toggle is on right (English selected) */
+.language-toggle-switch.toggle-active .toggle-flag-en {
+    opacity: 1;
+}
+
+.toggle-flag .flag-img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 2px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    display: block;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.btn-language-switcher .lang-text {
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+/* Active state flag styling */
+.language-toggle-switch.toggle-active .toggle-flag-en .flag-img {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.language-toggle-switch:not(.toggle-active) .toggle-flag-tr .flag-img {
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Hover effect */
+.language-toggle-switch:hover .toggle-slider {
+    transform: scale(1.05);
+}
+
+.language-toggle-switch.toggle-active:hover .toggle-slider {
+    transform: translateX(40px) scale(1.05);
+}
+
+/* Active/pressed state */
+.language-toggle-switch:active .toggle-slider {
+    transform: scale(0.95);
+}
+
+.language-toggle-switch.toggle-active:active .toggle-slider {
+    transform: translateX(40px) scale(0.95);
 }
 
 /* Google Colab Logo */
@@ -363,8 +466,8 @@ body {
 
 .help-dialog {
     background: white;
-    border-radius: 20px;
-    max-width: 480px;
+    border-radius: 16px;
+    max-width: 400px;
     width: 100%;
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
     animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -385,104 +488,237 @@ body {
 .help-dialog-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 20px 24px;
+    gap: 12px;
+    padding: 16px 20px;
     background: linear-gradient(135deg, #0066cc, #0088ff);
     color: white;
+    position: relative;
 }
 
 .help-dialog-icon {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .help-dialog-icon svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
 .help-dialog-header h3 {
     flex: 1;
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
     margin: 0;
+    min-width: 0;
 }
 
 .help-dialog-close {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     line-height: 1;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .help-dialog-close:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+}
+
+.help-dialog-close:active {
     transform: scale(1.05);
 }
 
 .help-dialog-body {
-    padding: 24px;
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .help-dialog-body h4 {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #1a202c;
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .help-dialog-body p {
     color: #475569;
-    line-height: 1.7;
-    margin: 0 0 16px;
-    font-size: 0.925rem;
+    line-height: 1.6;
+    margin: 0 0 12px;
+    font-size: 0.875rem;
 }
 
 .help-dialog-body ul {
-    margin: 0 0 16px;
-    padding-left: 20px;
+    margin: 0 0 12px;
+    padding-left: 18px;
 }
 
 .help-dialog-body li {
     color: #475569;
-    line-height: 1.7;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
 }
 
 .help-dialog-body .highlight-box {
     background: linear-gradient(135deg, rgba(0, 102, 204, 0.06), rgba(0, 136, 255, 0.1));
     border-left: 4px solid #0066cc;
-    border-radius: 0 10px 10px 0;
-    padding: 14px 18px;
-    margin-top: 16px;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    margin-top: 12px;
 }
 
 .help-dialog-body .highlight-box p {
     margin: 0;
     color: #0066cc;
     font-weight: 500;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
+}
+
+/* GitHub Help Content Styles */
+.github-help-content {
+    color: #1a202c;
+}
+
+.github-help-content h4 {
+    font-size: 0.95rem;
+    color: #1a202c;
+    margin: 0 0 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.github-description {
+    color: #475569;
+    line-height: 1.6;
+    margin: 0 0 16px;
+    font-size: 0.85rem;
+}
+
+.github-info-box {
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.04), rgba(0, 136, 255, 0.08));
+    border-radius: 10px;
+    padding: 12px;
+    margin: 14px 0;
+    border: 1px solid rgba(0, 102, 204, 0.1);
+}
+
+.github-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #334155;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.github-info-item:last-child {
+    margin-bottom: 0;
+}
+
+.github-info-item svg {
+    color: #0066cc;
+    margin-top: 2px;
+}
+
+.github-contact-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.github-contact-section h5 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.github-contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.github-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    color: #475569;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.github-contact-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateX(2px);
+}
+
+.github-contact-item svg {
+    color: #0066cc;
+    flex-shrink: 0;
+}
+
+.github-email-link {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.github-email-link:hover {
+    color: #0052a3;
+    text-decoration: underline;
+}
+
+/* GitHub dropdown item styling */
+.dropdown-item-github {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 4px;
+    padding-top: 12px;
+}
+
+.dropdown-item-github:hover {
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.04), rgba(0, 136, 255, 0.08));
 }
 
 .help-dialog-footer {
-    padding: 16px 24px 20px;
+    padding: 14px 20px 16px;
     background: #f8fafc;
     border-top: 1px solid #e2e8f0;
     display: flex;
@@ -3634,7 +3870,7 @@ body {
 
 .hint-tooltip {
     position: absolute;
-    bottom: calc(100% + 10px);
+    top: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%);
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
@@ -3655,11 +3891,11 @@ body {
 .hint-tooltip::after {
     content: '';
     position: absolute;
-    top: 100%;
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-top-color: #334155;
+    border-bottom-color: #334155;
 }
 
 .hint-icon:hover .hint-tooltip,
@@ -3667,7 +3903,7 @@ body {
 .hint-icon.active .hint-tooltip {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(-4px);
+    transform: translateX(-50%) translateY(4px);
 }
 
 /* Checkbox Option Card for Advanced Settings */
