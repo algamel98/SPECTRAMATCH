@@ -80,22 +80,74 @@ body {
     align-items: center;
 }
 
+.language-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toggle-flag-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.5;
+    filter: grayscale(0.3);
+}
+
+.toggle-flag-side .flag-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 3px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active flag styling - Turkish selected */
+.language-toggle-wrapper.lang-tr-active .toggle-flag-tr {
+    opacity: 1;
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
+.language-toggle-wrapper.lang-tr-active .toggle-flag-tr .flag-img {
+    border-color: #0066cc;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.25);
+}
+
+/* Active flag styling - English selected */
+.language-toggle-wrapper.lang-en-active .toggle-flag-en {
+    opacity: 1;
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
+.language-toggle-wrapper.lang-en-active .toggle-flag-en .flag-img {
+    border-color: #0066cc;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.25);
+}
+
 .language-toggle-switch {
     position: relative;
-    width: 80px;
-    height: 40px;
+    width: 70px;
+    height: 36px;
     background: transparent;
     border: none;
     padding: 0;
     cursor: pointer;
     outline: none;
     -webkit-tap-highlight-color: transparent;
+    order: 2;
 }
 
 .language-toggle-switch:focus-visible {
     outline: 2px solid #0066cc;
     outline-offset: 2px;
-    border-radius: 24px;
+    border-radius: 20px;
 }
 
 .toggle-track {
@@ -103,7 +155,7 @@ body {
     width: 100%;
     height: 100%;
     background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-    border-radius: 24px;
+    border-radius: 20px;
     box-shadow: 
         inset 0 2px 4px rgba(0, 0, 0, 0.1),
         0 2px 8px rgba(0, 0, 0, 0.08);
@@ -126,10 +178,10 @@ body {
 
 .toggle-slider {
     position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 32px;
-    height: 32px;
+    top: 3px;
+    left: 3px;
+    width: 30px;
+    height: 30px;
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 50%;
     box-shadow: 
@@ -137,81 +189,45 @@ body {
         0 1px 3px rgba(0, 0, 0, 0.2),
         inset 0 -1px 2px rgba(255, 255, 255, 0.8);
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 2;
 }
 
 .language-toggle-switch.toggle-active .toggle-slider {
-    transform: translateX(40px);
+    transform: translateX(34px);
     box-shadow: 
         0 3px 10px rgba(0, 102, 204, 0.25),
         0 1px 4px rgba(0, 102, 204, 0.2),
         inset 0 -1px 2px rgba(255, 255, 255, 0.9);
 }
 
-.toggle-flag {
-    position: absolute;
-    width: 24px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease 0.1s;
-    pointer-events: none;
-}
-
+/* Flag positioning */
 .toggle-flag-tr {
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
+    order: 1;
 }
 
 .toggle-flag-en {
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
+    order: 3;
 }
 
-/* Show Turkish flag when toggle is on left (Turkish selected) */
-.language-toggle-switch:not(.toggle-active) .toggle-flag-tr {
+/* Hover effect on flags */
+.toggle-flag-side:hover {
+    transform: scale(1.15);
+    opacity: 0.8;
+}
+
+.language-toggle-wrapper.lang-tr-active .toggle-flag-tr:hover,
+.language-toggle-wrapper.lang-en-active .toggle-flag-en:hover {
     opacity: 1;
+    filter: grayscale(0);
 }
 
-/* Show English flag when toggle is on right (English selected) */
-.language-toggle-switch.toggle-active .toggle-flag-en {
-    opacity: 1;
-}
-
-.toggle-flag .flag-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 3px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Active state flag styling */
-.language-toggle-switch.toggle-active .toggle-flag-en .flag-img {
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.language-toggle-switch:not(.toggle-active) .toggle-flag-tr .flag-img {
-    border-color: rgba(0, 0, 0, 0.2);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-}
-
-/* Hover effect */
+/* Hover effect on toggle */
 .language-toggle-switch:hover .toggle-slider {
     transform: scale(1.05);
 }
 
 .language-toggle-switch.toggle-active:hover .toggle-slider {
-    transform: translateX(40px) scale(1.05);
+    transform: translateX(34px) scale(1.05);
 }
 
 /* Active/pressed state */
@@ -220,7 +236,7 @@ body {
 }
 
 .language-toggle-switch.toggle-active:active .toggle-slider {
-    transform: translateX(40px) scale(0.95);
+    transform: translateX(34px) scale(0.95);
 }
 
 /* Google Colab Logo */

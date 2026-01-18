@@ -164,18 +164,19 @@
         <div class="header-right">
             <!-- Language Toggle Switch -->
             <div class="language-toggle-container" id="languageToggleContainer">
-                <button class="language-toggle-switch" id="btnLanguageSwitcher" type="button" role="switch" aria-label="Switch Language">
-                    <div class="toggle-track">
-                        <div class="toggle-slider">
-                            <div class="toggle-flag toggle-flag-tr">
-                                <img src="/static/images/tr.png" alt="Turkish Flag" class="flag-img">
-                            </div>
-                            <div class="toggle-flag toggle-flag-en">
-                                <img src="/static/images/uk.png" alt="English Flag" class="flag-img">
-                            </div>
-                        </div>
+                <div class="language-toggle-wrapper">
+                    <div class="toggle-flag-side toggle-flag-tr">
+                        <img src="/static/images/tr.png" alt="Turkish Flag" class="flag-img">
                     </div>
-                </button>
+                    <button class="language-toggle-switch" id="btnLanguageSwitcher" type="button" role="switch" aria-label="Switch Language">
+                        <div class="toggle-track">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </button>
+                    <div class="toggle-flag-side toggle-flag-en">
+                        <img src="/static/images/uk.png" alt="English Flag" class="flag-img">
+                    </div>
+                </div>
             </div>
             
             <!-- Source Code Download Button -->

@@ -95,10 +95,17 @@ function updateLanguageToggle() {
     var toggle = document.getElementById('btnLanguageSwitcher');
     if (!toggle) return;
     
+    var wrapper = toggle.closest('.language-toggle-wrapper');
+    if (!wrapper) return;
+    
     var currentLang = I18n.getLanguage();
     // Turkish = left position (false), English = right position (true)
     toggle.setAttribute('aria-checked', currentLang === 'en' ? 'true' : 'false');
     toggle.classList.toggle('toggle-active', currentLang === 'en');
+    
+    // Update wrapper class for flag styling
+    wrapper.classList.toggle('lang-en-active', currentLang === 'en');
+    wrapper.classList.toggle('lang-tr-active', currentLang === 'tr');
     
     // Update title
     toggle.setAttribute('aria-label', currentLang === 'en' ? 'Türkçe\'ye Geç' : 'Switch to English');
