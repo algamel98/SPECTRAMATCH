@@ -674,7 +674,12 @@ if __name__ == '__main__':
     print("TEXTILE QC SYSTEM - Web Application")
     print("=" * 60)
     print(f"Upload folder: {app.config['UPLOAD_FOLDER']}")
-    print("Starting server on http://localhost:5001")
+    
+    # Get port from environment variable (for Render) or use default
+    port = int(os.environ.get('PORT', 5001))
+    debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    
+    print(f"Starting server on port {port}")
     print("=" * 60)
     
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=debug)

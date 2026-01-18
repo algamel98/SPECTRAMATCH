@@ -22,3 +22,6 @@ reportlab>=3.6.0
 
 # Visualization
 matplotlib>=3.5.0
+
+# Production Server
+gunicorn>=21.2.0
