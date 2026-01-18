@@ -540,9 +540,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Technical Datasheet (Turkish)**: `DataSheets/Datasheet TR.pdf`
 - **Source Code**: Available for download through the web interface
 
-### Related Projects
 
-- [Add links to related projects or research papers]
 
 ### Citations
 
